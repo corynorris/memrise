@@ -13,8 +13,4 @@ defmodule MemriseWeb.Resolvers.User do
       {:error, changeset} -> Errors.format(changeset)
     end
   end
-
-  @spec current_user(any(), any(), any()) :: nil
-  def current_user(_parent, _params, _resolution) do
-  end
 end

@@ -14,6 +14,9 @@ defmodule Memrise.Accounts.User do
     field :last_name, :string
     field :password, :string
 
+    has_many(:owned_courses, Memrise.Courses.Course)
+    has_many(:owned_cards, through: [:owned_courses, :cards])
+
     timestamps()
   end
 

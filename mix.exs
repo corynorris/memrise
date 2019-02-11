@@ -44,7 +44,8 @@ defmodule Memrise.MixProject do
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
       {:absinthe_ecto, ">= 0.0.0"},
-      {:guardian, "1.2.1"},
+      {:guardian, "~> 1.2.1"},
+      {:dataloader, "~> 1.0.6"},
       {:comeonin, "~> 4.0"},
       {:argon2_elixir, "~> 1.3"},
       {:recase, "~> 0.4"}

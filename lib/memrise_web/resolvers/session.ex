@@ -4,14 +4,11 @@ defmodule MemriseWeb.Resolvers.Session do
   alias MemriseWeb.Guardian
   alias MemriseWeb.Utils.Errors
 
-  # def sign_in(_parent, user_params, _resolution) do
-  #   with {:ok, %User{} = user} <- Users.create_user(user_params),
-  #        {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user) do
-  #     {:ok, %{user: user, token: jwt}}
-  #   else
-  #     {:error, changeset} -> Errors.format(changeset)
-  #   end
-  # end
+  def current_user(_parent, _params, %{context: %{current_user: user}}) do
+    {:ok, user}
+  end
+
+  def current_user(_parent, _params, _resolution), do: {:error, "Access denied"}
 
   def sign_in(_parent, user_credentials, _resolution) do
     case Auth.sign_in(user_credentials) do

@@ -1,13 +1,13 @@
 defmodule MemriseWeb.Router do
   use MemriseWeb, :router
 
-  pipeline :api do
-    plug :accepts, ["json"]
+  pipeline :graphql do
+    plug MemriseWeb.Context
   end
 
   # Other scopes may use custom stacks.
   scope "/" do
-    pipe_through :api
+    pipe_through :graphql
 
     forward "/graphql", Absinthe.Plug,
       schema: MemriseWeb.Schema,
