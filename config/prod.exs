@@ -15,10 +15,6 @@ config :memrise, Memrise.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
-config :memrise, TrelloWeb.Guardian,
-  issuer: "memrise",
-  secret_key: Map.fetch!(System.get_env(), "SECRET_KEY")
-
 config :memrise, MemriseWeb.Guardian,
   issuer: "memrise",
   secret_key: Map.fetch!(System.get_env(), "SECRET_KEY")
