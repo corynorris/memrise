@@ -2,7 +2,7 @@ defmodule MemriseWeb.Schema.CourseTypes do
   use Absinthe.Schema.Notation
   alias MemriseWeb.Resolvers
 
-  # import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   object :course do
     field :id, :id
@@ -10,9 +10,7 @@ defmodule MemriseWeb.Schema.CourseTypes do
     field :name, :string
     field :description, :string
 
-    field :cards, list_of(:card) do
-      resolve(&Resolvers.Card.list_cards/3)
-    end
+    field :cards, list_of(:card), resolve: dataloader(:courses)
   end
 
   object :course_mutations do
@@ -25,18 +23,13 @@ defmodule MemriseWeb.Schema.CourseTypes do
   end
 
   object :course_queries do
-    @desc "Gets courses owned by the user"
-    field :list_owned_courses, list_of(:course) do
-      resolve(&Resolvers.Course.list_owned_courses/3)
-    end
-
     @desc "List all courses"
-    field :list_courses, list_of(:course) do
+    field :courses, list_of(:course) do
       resolve(&Resolvers.Course.list_courses/3)
     end
 
     @desc "Get a specific course by ID"
-    field :get_course, type: :course do
+    field :course, type: :course do
       arg(:id, non_null(:id))
       resolve(&Resolvers.Course.get_course/3)
     end

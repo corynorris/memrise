@@ -3,6 +3,14 @@ defmodule MemriseWeb.Resolvers.Course do
   alias Memrise.Courses.Course
   alias MemriseWeb.Utils.Errors
 
+  def data() do
+    Dataloader.Ecto.new(MyApp.Repo, query: &query/2)
+  end
+
+  def query(queryable, _params) do
+    queryable
+  end
+
   # Public
   def list_courses(_parent, _params, _resolvers) do
     {:ok, Courses.list_courses()}

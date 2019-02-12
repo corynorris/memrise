@@ -5,6 +5,10 @@ defmodule MemriseWeb.Schema do
   import_types(MemriseWeb.Schema.CourseTypes)
   import_types(MemriseWeb.Schema.CardTypes)
 
+  def plugins do
+    [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
+  end
+
   mutation do
     import_fields(:user_mutations)
     import_fields(:course_mutations)

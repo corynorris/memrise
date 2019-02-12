@@ -23,9 +23,9 @@ defmodule MemriseWeb.Schema.CardTypes do
   end
 
   object :card_queries do
-    # @desc "Gets cards owned by the user"
-    # field :list_owned_cards, list_of(:card) do
-    #   resolve(&Resolvers.Card.list_cards/3)
-    # end
+    @desc "Gets cards owned by the user"
+    field :cards, list_of(:card) do
+      resolve(&Resolvers.Card.list_cards/3)
+    end
   end
 end

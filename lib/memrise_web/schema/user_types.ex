@@ -20,8 +20,8 @@ defmodule MemriseWeb.Schema.UserTypes do
   end
 
   object :user_mutations do
-    @desc "Register a new user"
-    field :register, type: :current_user do
+    @desc "Sign up a new user"
+    field :sign_up, type: :current_user do
       arg(:email, non_null(:string))
       arg(:first_name, non_null(:string))
       arg(:last_name, non_null(:string))

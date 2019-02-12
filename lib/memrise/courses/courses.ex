@@ -9,6 +9,17 @@ defmodule Memrise.Courses do
   alias Memrise.Courses.Course
 
   @doc """
+    Data Loader
+  """
+  def data() do
+    Dataloader.Ecto.new(Memrise.Repo, query: &query/2)
+  end
+
+  def query(queryable, _params) do
+    queryable
+  end
+
+  @doc """
   Returns the list of courses.
 
   ## Examples

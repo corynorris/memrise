@@ -6,7 +6,7 @@ defmodule MemriseWeb.Context do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = build_context(conn)
+    context = build_context(conn) |> data_loader()
     Absinthe.Plug.put_options(conn, context: context)
   end
 
@@ -30,5 +30,13 @@ defmodule MemriseWeb.Context do
       {:error, _reason} ->
         {:error, "invalid authorization token"}
     end
+  end
+
+  defp data_loader(context) do
+    loader =
+      Dataloader.new()
+      |> Dataloader.add_source(:courses, Memrise.Courses.data())
+
+    Map.put(context, :loader, loader)
   end
 end
