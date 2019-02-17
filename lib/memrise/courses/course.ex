@@ -28,5 +28,8 @@ defmodule Memrise.Courses.Course do
     course
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> validate_length(:name, min: 1, max: 100)
+    |> validate_length(:description, min: 1, max: 2000)
+    |> foreign_key_constraint(:user_id)
   end
 end

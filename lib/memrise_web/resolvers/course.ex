@@ -59,8 +59,6 @@ defmodule MemriseWeb.Resolvers.Course do
 
   def delete_course(_, _, _), do: {:error, "Access denied"}
 
-  @spec subscribe_to_course(any(), any(), any()) ::
-          {:error, bitstring() | maybe_improper_list()} | {:ok, Memrise.Courses.Course.t()}
   def subscribe_to_course(_parent, course_params, %{context: %{current_user: user}}) do
     with {:ok, %Course{} = course} <- Courses.subscribe_to_course(user, course_params) do
       {:ok, course}
@@ -69,6 +67,5 @@ defmodule MemriseWeb.Resolvers.Course do
     end
   end
 
-  # def subscribe_to_course(_parent, _params, _resolutions),
-  #   do: {:error, "You need to be logged in to subscribe to a course"}
+  def subscribe_to_course(_, _, _), do: {:error, "Access denied"}
 end

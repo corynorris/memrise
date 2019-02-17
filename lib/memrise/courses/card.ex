@@ -26,5 +26,32 @@ defmodule Memrise.Courses.Card do
     card
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> foreign_key_constraint(:course_id)
+    |> validate_length(:front, min: 1, max: 100)
+    |> validate_length(:back, min: 1, max: 100)
+    |> validate_length(:hint, min: 1, max: 2000)
+    |> validate_url(:image)
+  end
+
+  defp validate_url(changeset, field, opts \\ []) do
+    validate_change(changeset, field, fn _, value ->
+      case URI.parse(value) do
+        %URI{scheme: nil} ->
+          "is missing a scheme (e.g. https)"
+
+        %URI{host: nil} ->
+          "is missing a host"
+
+        %URI{host: host} ->
+          case :inet.gethostbyname(Kernel.to_charlist(host)) do
+            {:ok, _} -> nil
+            {:error, _} -> "invalid host"
+          end
+      end
+      |> case do
+        error when is_binary(error) -> [{field, Keyword.get(opts, :message, error)}]
+        _ -> []
+      end
+    end)
   end
 end
