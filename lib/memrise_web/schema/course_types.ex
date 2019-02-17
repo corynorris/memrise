@@ -13,15 +13,6 @@ defmodule MemriseWeb.Schema.CourseTypes do
     field :cards, list_of(:card), resolve: dataloader(:courses)
   end
 
-  object :course_mutations do
-    @desc "Create course"
-    field :create_course, type: :course do
-      arg(:name, non_null(:string))
-      arg(:description, :string)
-      resolve(&Resolvers.Course.create_course/3)
-    end
-  end
-
   object :course_queries do
     @desc "List all courses"
     field :courses, list_of(:course) do
@@ -32,6 +23,29 @@ defmodule MemriseWeb.Schema.CourseTypes do
     field :course, type: :course do
       arg(:id, non_null(:id))
       resolve(&Resolvers.Course.get_course/3)
+    end
+  end
+
+  object :course_mutations do
+    @desc "Create a course"
+    field :create_course, type: :course do
+      arg(:name, non_null(:string))
+      arg(:description, :string)
+      resolve(&Resolvers.Course.create_course/3)
+    end
+
+    @desc "Update a course"
+    field :update_course, type: :course do
+      arg(:id, non_null(:id))
+      arg(:name, :string)
+      arg(:description, :string)
+      resolve(&Resolvers.Course.update_course/3)
+    end
+
+    @desc "Delete a course"
+    field :delete_course, type: :course do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.Course.delete_course/3)
     end
   end
 end

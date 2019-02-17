@@ -13,6 +13,6 @@ defmodule MemriseWeb.Router do
       schema: MemriseWeb.Schema,
       json_codec: Jason
 
-    forward "/graphiql", Absinthe.Plug.GraphiQL, schema: MemriseWeb.Schema, json_codec: Jason
+    forward "/", Absinthe.Plug.GraphiQL, schema: MemriseWeb.Schema, json_codec: Jason
   end
 end

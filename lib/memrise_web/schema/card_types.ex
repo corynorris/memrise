@@ -10,6 +10,9 @@ defmodule MemriseWeb.Schema.CardTypes do
     field :image, :string
   end
 
+  object :card_queries do
+  end
+
   object :card_mutations do
     @desc "Create card"
     field :create_card, type: :card do
@@ -20,12 +23,22 @@ defmodule MemriseWeb.Schema.CardTypes do
       arg(:image, :string)
       resolve(&Resolvers.Card.create_card/3)
     end
-  end
 
-  object :card_queries do
-    @desc "Gets cards owned by the user"
-    field :cards, list_of(:card) do
-      resolve(&Resolvers.Card.list_cards/3)
+    @desc "Update card"
+    field :update_card, type: :card do
+      arg(:id, non_null(:id))
+      arg(:back, non_null(:string))
+      arg(:front, non_null(:string))
+      arg(:course_id, non_null(:id))
+      arg(:hint, :string)
+      arg(:image, :string)
+      resolve(&Resolvers.Card.update_card/3)
+    end
+
+    @desc "Delete card"
+    field :delete_card, type: :card do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.Card.delete_card/3)
     end
   end
 end

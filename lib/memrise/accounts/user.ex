@@ -3,6 +3,7 @@ defmodule Memrise.Accounts.User do
   import Ecto.Changeset
 
   alias Memrise.Accounts.Encryption
+  alias Memrise.Courses.Course
 
   @sign_up_fields ~w(first_name last_name email password)a
   @sign_in_fields ~w(email password)a
@@ -14,8 +15,9 @@ defmodule Memrise.Accounts.User do
     field :last_name, :string
     field :password, :string
 
-    has_many(:owned_courses, Memrise.Courses.Course)
+    has_many(:owned_courses, Course)
     has_many(:owned_cards, through: [:owned_courses, :cards])
+    many_to_many(:subscribed_courses, Course, join_through: "course_subscriptions")
 
     timestamps()
   end

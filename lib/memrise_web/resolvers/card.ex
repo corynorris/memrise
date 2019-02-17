@@ -1,6 +1,7 @@
 defmodule MemriseWeb.Resolvers.Card do
   alias Memrise.Courses
   alias Memrise.Courses.Card
+  alias Memrise.Courses.Course
   alias MemriseWeb.Utils.Errors
 
   # Public
@@ -14,12 +15,24 @@ defmodule MemriseWeb.Resolvers.Card do
 
   # Private
   def create_card(_parent, card_params, %{context: %{current_user: user}}) do
-    with {:ok, %Card{} = card} <- Courses.create_card(user, card_params) do
+    with {:ok, %Course{} = _course} <- Courses.get_user_course(user, card_params.course_id),
+         {:ok, %Card{} = card} <- Courses.create_card(card_params) do
       {:ok, card}
     else
-      {:error, changeset} -> Errors.format(changeset)
+      {:error, errors} -> Errors.format(errors)
     end
   end
 
-  def create_card(_parent, _params, _resolutions), do: {:error, "Access denied"}
+  def create_card(_, _, _), do: {:error, "Access denied"}
+
+  def update_card(_parent, card_params, %{context: %{current_user: user}}) do
+    with {:ok, %Card{} = card} <- Courses.get_user_card(user, card_params.course_id),
+         {:ok, %Card{} = card} <- Courses.update_card(card, card_params) do
+      {:ok, card}
+    else
+      {:error, errors} -> Errors.format(errors)
+    end
+  end
+
+  def update_card(_, _, _), do: {:error, "Access denied"}
 end

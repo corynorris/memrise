@@ -17,6 +17,12 @@ defmodule Memrise.Courses do
 
   def query(queryable, _params) do
     queryable
+    |> with_active()
+  end
+
+  def with_active(query) do
+    from w in query,
+      where: w.deleted == false
   end
 
   @doc """
@@ -29,12 +35,8 @@ defmodule Memrise.Courses do
 
   """
   def list_courses do
-    Repo.all(Course)
-  end
-
-  def list_owned_courses(user) do
-    user
-    |> Ecto.assoc(:owned_courses)
+    Course
+    |> with_active()
     |> Repo.all()
   end
 
@@ -52,7 +54,18 @@ defmodule Memrise.Courses do
       ** (Ecto.NoResultsError)
 
   """
-  def get_course!(id), do: Repo.get!(Course, id)
+  def get_course!(id), do: Course |> with_active() |> Repo.get!(id)
+
+  def get_user_course(user, course_id) do
+    user
+    |> Ecto.assoc(:owned_courses)
+    |> with_active()
+    |> Repo.get(course_id)
+    |> case do
+      nil -> {:error, "Course doesn't exist, or this user doesn't have access to it."}
+      course -> {:ok, course}
+    end
+  end
 
   @doc """
   Creates a course.
@@ -66,9 +79,8 @@ defmodule Memrise.Courses do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_course(user, attrs \\ %{}) do
-    user
-    |> Ecto.build_assoc(:owned_courses)
+  def create_course(attrs \\ %{}) do
+    %Course{}
     |> Course.changeset(attrs)
     |> Repo.insert()
   end
@@ -85,10 +97,35 @@ defmodule Memrise.Courses do
       {:error, %Ecto.Changeset{}}
 
   """
+
   def update_course(%Course{} = course, attrs) do
     course
     |> Course.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Course.
+
+  ## Examples
+
+      iex> delete_course(course)
+      {:ok, %Course{}}
+
+      iex> delete_course(course)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_course(%Course{} = course) do
+    # from(c in "cards", where: c.course_id == ^course.id)
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:courses, Course.mark_for_deletion(course))
+    |> Ecto.Multi.update_all(:update_all, Ecto.assoc(course, :cards), set: [deleted: true])
+    |> Repo.transaction()
+    |> case do
+      {:ok, _} -> {:ok, course}
+      _ -> {:error, "Operation failed"}
+    end
   end
 
   # @doc """
@@ -125,6 +162,7 @@ defmodule Memrise.Courses do
   def list_cards(course) do
     course
     |> Ecto.assoc(:cards)
+    |> with_active()
     |> Repo.all()
   end
 
@@ -144,6 +182,17 @@ defmodule Memrise.Courses do
   """
   def get_card!(id), do: Repo.get!(Card, id)
 
+  def get_user_card(user, card_id) do
+    user
+    |> Ecto.assoc(:owned_cards)
+    |> with_active()
+    |> Repo.get(card_id)
+    |> case do
+      nil -> {:error, "Card doesn't exist, or this user doesn't have access to it."}
+      course -> {:ok, course}
+    end
+  end
+
   @doc """
   Creates a card.
 
@@ -156,11 +205,8 @@ defmodule Memrise.Courses do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_card(user, attrs \\ %{}) do
-    user
-    |> Ecto.assoc(:owned_courses)
-    |> Repo.get!(attrs[:course_id])
-    |> Ecto.build_assoc(:cards)
+  def create_card(attrs \\ %{}) do
+    %Card{}
     |> Card.changeset(attrs)
     |> Repo.insert()
   end
@@ -196,6 +242,8 @@ defmodule Memrise.Courses do
 
   """
   def delete_card(%Card{} = card) do
-    Repo.delete(card)
+    card
+    |> Card.mark_for_deletion()
+    |> Repo.update()
   end
 end

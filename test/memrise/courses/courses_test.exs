@@ -128,4 +128,124 @@ defmodule Memrise.CoursesTest do
       assert %Ecto.Changeset{} = Courses.change_card(card)
     end
   end
+
+  describe "user_courses" do
+    alias Memrise.Courses.UserCourses
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def user_courses_fixture(attrs \\ %{}) do
+      {:ok, user_courses} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Courses.create_user_courses()
+
+      user_courses
+    end
+
+    test "list_user_courses/0 returns all user_courses" do
+      user_courses = user_courses_fixture()
+      assert Courses.list_user_courses() == [user_courses]
+    end
+
+    test "get_user_courses!/1 returns the user_courses with given id" do
+      user_courses = user_courses_fixture()
+      assert Courses.get_user_courses!(user_courses.id) == user_courses
+    end
+
+    test "create_user_courses/1 with valid data creates a user_courses" do
+      assert {:ok, %UserCourses{} = user_courses} = Courses.create_user_courses(@valid_attrs)
+    end
+
+    test "create_user_courses/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Courses.create_user_courses(@invalid_attrs)
+    end
+
+    test "update_user_courses/2 with valid data updates the user_courses" do
+      user_courses = user_courses_fixture()
+      assert {:ok, %UserCourses{} = user_courses} = Courses.update_user_courses(user_courses, @update_attrs)
+    end
+
+    test "update_user_courses/2 with invalid data returns error changeset" do
+      user_courses = user_courses_fixture()
+      assert {:error, %Ecto.Changeset{}} = Courses.update_user_courses(user_courses, @invalid_attrs)
+      assert user_courses == Courses.get_user_courses!(user_courses.id)
+    end
+
+    test "delete_user_courses/1 deletes the user_courses" do
+      user_courses = user_courses_fixture()
+      assert {:ok, %UserCourses{}} = Courses.delete_user_courses(user_courses)
+      assert_raise Ecto.NoResultsError, fn -> Courses.get_user_courses!(user_courses.id) end
+    end
+
+    test "change_user_courses/1 returns a user_courses changeset" do
+      user_courses = user_courses_fixture()
+      assert %Ecto.Changeset{} = Courses.change_user_courses(user_courses)
+    end
+  end
+
+  describe "course_activity" do
+    alias Memrise.Courses.CourseActivity
+
+    @valid_attrs %{last_studied: ~N[2010-04-17 14:00:00], retries: 42, strength: 42}
+    @update_attrs %{last_studied: ~N[2011-05-18 15:01:01], retries: 43, strength: 43}
+    @invalid_attrs %{last_studied: nil, retries: nil, strength: nil}
+
+    def course_activity_fixture(attrs \\ %{}) do
+      {:ok, course_activity} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Courses.create_course_activity()
+
+      course_activity
+    end
+
+    test "list_course_activity/0 returns all course_activity" do
+      course_activity = course_activity_fixture()
+      assert Courses.list_course_activity() == [course_activity]
+    end
+
+    test "get_course_activity!/1 returns the course_activity with given id" do
+      course_activity = course_activity_fixture()
+      assert Courses.get_course_activity!(course_activity.id) == course_activity
+    end
+
+    test "create_course_activity/1 with valid data creates a course_activity" do
+      assert {:ok, %CourseActivity{} = course_activity} = Courses.create_course_activity(@valid_attrs)
+      assert course_activity.last_studied == ~N[2010-04-17 14:00:00]
+      assert course_activity.retries == 42
+      assert course_activity.strength == 42
+    end
+
+    test "create_course_activity/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Courses.create_course_activity(@invalid_attrs)
+    end
+
+    test "update_course_activity/2 with valid data updates the course_activity" do
+      course_activity = course_activity_fixture()
+      assert {:ok, %CourseActivity{} = course_activity} = Courses.update_course_activity(course_activity, @update_attrs)
+      assert course_activity.last_studied == ~N[2011-05-18 15:01:01]
+      assert course_activity.retries == 43
+      assert course_activity.strength == 43
+    end
+
+    test "update_course_activity/2 with invalid data returns error changeset" do
+      course_activity = course_activity_fixture()
+      assert {:error, %Ecto.Changeset{}} = Courses.update_course_activity(course_activity, @invalid_attrs)
+      assert course_activity == Courses.get_course_activity!(course_activity.id)
+    end
+
+    test "delete_course_activity/1 deletes the course_activity" do
+      course_activity = course_activity_fixture()
+      assert {:ok, %CourseActivity{}} = Courses.delete_course_activity(course_activity)
+      assert_raise Ecto.NoResultsError, fn -> Courses.get_course_activity!(course_activity.id) end
+    end
+
+    test "change_course_activity/1 returns a course_activity changeset" do
+      course_activity = course_activity_fixture()
+      assert %Ecto.Changeset{} = Courses.change_course_activity(course_activity)
+    end
+  end
 end
